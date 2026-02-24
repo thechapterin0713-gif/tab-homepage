@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
       process.env.SUPABASE_ANON_KEY
     );
 
-    const { data, error: dbError } = await supabase
+    const { error: dbError } = await supabase
       .from('applications')
       .insert({
         name: body.name,
@@ -45,9 +45,7 @@ module.exports = async function handler(req, res) {
         stage: body.stage,
         interest: body.interest || null,
         referral: body.referral || null,
-      })
-      .select('id')
-      .single();
+      });
 
     if (dbError) {
       console.error('Supabase error:', JSON.stringify(dbError));
@@ -77,7 +75,7 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    return res.status(200).json({ success: true, id: data.id });
+    return res.status(200).json({ success: true });
   } catch (err) {
     console.error('Server error:', err.message, err.stack);
     return res.status(500).json({ error: '서버 오류가 발생했습니다.' });

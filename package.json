@@ -1,0 +1,14 @@
+{
+  "name": "tab-homepage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TAB - 태오의 실행 비즈니스 홈페이지",
+  "scripts": {
+    "dev": "node serve.mjs",
+    "start": "node serve.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "resend": "^2.1.0"
+  }
+}

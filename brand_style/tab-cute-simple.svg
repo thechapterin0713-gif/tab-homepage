@@ -1,0 +1,62 @@
+<svg width="300" height="150" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="150" fill="#FFFFFF"/>
+  
+  <!-- Decorative elements -->
+  <text x="20" y="30" font-size="14" fill="#7DD3FC">✦</text>
+  <text x="270" y="35" font-size="12" fill="#7DD3FC">⭐</text>
+  
+  <!-- Pixel T -->
+  <g transform="translate(70, 35)">
+    <rect x="0" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="8" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="24" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="32" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="10" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="20" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="30" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="40" width="8" height="8" rx="1" fill="#334155"/>
+  </g>
+  
+  <!-- Pixel A -->
+  <g transform="translate(120, 35)">
+    <rect x="8" y="0" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="16" y="0" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="24" y="0" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="0" y="10" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="32" y="10" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="0" y="20" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="8" y="20" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="16" y="20" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="24" y="20" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="32" y="20" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="0" y="30" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="32" y="30" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="0" y="40" width="8" height="8" rx="1" fill="#0EA5E9"/>
+    <rect x="32" y="40" width="8" height="8" rx="1" fill="#0EA5E9"/>
+  </g>
+  
+  <!-- Pixel B -->
+  <g transform="translate(170, 35)">
+    <rect x="0" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="8" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="24" y="0" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="0" y="10" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="32" y="10" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="0" y="20" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="8" y="20" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="20" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="24" y="20" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="0" y="30" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="32" y="30" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="0" y="40" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="8" y="40" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="16" y="40" width="8" height="8" rx="1" fill="#334155"/>
+    <rect x="24" y="40" width="8" height="8" rx="1" fill="#334155"/>
+  </g>
+  
+  <!-- Tagline -->
+  <text x="150" y="115" text-anchor="middle" font-family="'Nunito', sans-serif" font-size="11" font-weight="600" fill="#334155">태오의 실행 비즈니스</text>
+</svg>

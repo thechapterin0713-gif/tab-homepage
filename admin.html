@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <title>TAB Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: { brand: '#7DD3FC', dark: '#0EA5E9', light: '#E0F7FF', deep: '#0284C7' },
+            brand: { dark: '#334155', cream: '#FEFCE8', pink: '#FDA4AF', mint: '#99F6E4', yellow: '#FDE047' },
+          },
+          fontFamily: {
+            display: ['Nunito', 'sans-serif'],
+            body: ['Noto Sans KR', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family: 'Noto Sans KR', sans-serif; background: #f8fafc; color: #334155; }
+    .status-badge {
+      display: inline-block; padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+    }
+    .status-pending { background: #FEF3C7; color: #92400E; }
+    .status-contacted { background: #E0F7FF; color: #0284C7; }
+    .status-enrolled { background: #D1FAE5; color: #065F46; }
+    .status-rejected { background: #FFE4E6; color: #9F1239; }
+    .card { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+    .btn {
+      padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; transition: transform .15s ease, opacity .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { background: #0EA5E9; color: #fff; }
+    .btn-ghost { background: transparent; color: #64748b; border: 1px solid #e2e8f0; }
+    .btn-ghost:hover { background: #f1f5f9; }
+    select, input, textarea {
+      font-family: 'Noto Sans KR', sans-serif;
+      border: 1.5px solid #e2e8f0; border-radius: 10px;
+      padding: 8px 12px; font-size: 14px; color: #334155;
+      transition: border-color .2s ease;
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none; border-color: #0EA5E9;
+      box-shadow: 0 0 0 3px rgba(14,165,233,.1);
+    }
+    .fade-in { animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity:0;transform:translateY(8px) } to { opacity:1;transform:translateY(0) } }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-5">
+  <div class="card p-8 w-full max-w-sm text-center">
+    <div class="flex items-center justify-center gap-2 mb-6">
+      <img src="brand_style/tab-cute-simple.svg" alt="TAB" class="h-8"/>
+    </div>
+    <h1 class="font-display text-xl mb-1" style="font-weight:800;color:#334155;">관리자 로그인</h1>
+    <p class="font-body text-xs mb-6" style="color:#94a3b8;">비밀번호를 입력해주세요</p>
+    <form onsubmit="handleLogin(event)">
+      <input type="password" id="loginPw" placeholder="비밀번호" required class="w-full mb-4" autocomplete="current-password"/>
+      <button type="submit" class="btn btn-primary w-full" id="loginBtn">로그인</button>
+    </form>
+    <p id="loginError" class="font-body text-xs mt-3" style="color:#EF4444;display:none;"></p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;" class="fade-in">
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="brand_style/tab-cute-simple.svg" alt="TAB" class="h-7"/>
+        <span class="font-body text-xs px-2 py-1 rounded-full" style="background:#E0F7FF;color:#0EA5E9;font-weight:600;">Admin</span>
+      </div>
+      <button class="btn btn-ghost" onclick="handleLogout()">로그아웃</button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-5 py-8">
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="card p-5">
+        <p class="font-body text-xs mb-1" style="color:#94a3b8;">전체 신청</p>
+        <p id="statTotal" class="font-display text-2xl" style="font-weight:900;color:#334155;">-</p>
+      </div>
+      <div class="card p-5">
+        <p class="font-body text-xs mb-1" style="color:#94a3b8;">대기 중</p>
+        <p id="statPending" class="font-display text-2xl" style="font-weight:900;color:#F59E0B;">-</p>
+      </div>
+      <div class="card p-5">
+        <p class="font-body text-xs mb-1" style="color:#94a3b8;">연락 완료</p>
+        <p id="statContacted" class="font-display text-2xl" style="font-weight:900;color:#0EA5E9;">-</p>
+      </div>
+      <div class="card p-5">
+        <p class="font-body text-xs mb-1" style="color:#94a3b8;">등록 완료</p>
+        <p id="statEnrolled" class="font-display text-2xl" style="font-weight:900;color:#10B981;">-</p>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="flex items-center gap-3 mb-6">
+      <span class="font-body text-sm" style="color:#64748b;font-weight:600;">필터:</span>
+      <select id="statusFilter" onchange="loadApplications()">
+        <option value="all">전체</option>
+        <option value="pending">대기 중</option>
+        <option value="contacted">연락 완료</option>
+        <option value="enrolled">등록 완료</option>
+        <option value="rejected">거절</option>
+      </select>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th class="text-left px-5 py-3 font-body text-xs" style="color:#94a3b8;font-weight:600;">이름</th>
+              <th class="text-left px-5 py-3 font-body text-xs" style="color:#94a3b8;font-weight:600;">이메일</th>
+              <th class="text-left px-5 py-3 font-body text-xs hidden md:table-cell" style="color:#94a3b8;font-weight:600;">전화번호</th>
+              <th class="text-left px-5 py-3 font-body text-xs hidden md:table-cell" style="color:#94a3b8;font-weight:600;">사업 단계</th>
+              <th class="text-left px-5 py-3 font-body text-xs" style="color:#94a3b8;font-weight:600;">상태</th>
+              <th class="text-left px-5 py-3 font-body text-xs hidden lg:table-cell" style="color:#94a3b8;font-weight:600;">신청일</th>
+              <th class="text-left px-5 py-3 font-body text-xs" style="color:#94a3b8;font-weight:600;">액션</th>
+            </tr>
+          </thead>
+          <tbody id="appTableBody">
+            <tr><td colspan="7" class="px-5 py-12 text-center font-body text-sm" style="color:#94a3b8;">로딩 중...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detailModal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);" onclick="if(event.target===this)closeDetail()">
+  <div class="fade-in" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;max-height:90vh;overflow-y:auto;background:#fff;border-radius:20px;padding:32px;">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-lg" style="font-weight:800;color:#334155;">신청 상세</h2>
+      <button onclick="closeDetail()" class="btn btn-ghost" style="padding:4px 10px;">✕</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+  const STAGE_MAP = { idea:'아이디어 단계', preparing:'준비 중', starting:'막 시작함', running:'운영 중(1년 미만)', growing:'운영 중(1년 이상)' };
+  const STATUS_MAP = { pending:'대기 중', contacted:'연락 완료', enrolled:'등록 완료', rejected:'거절' };
+  let allData = [];
+
+  // Login
+  async function handleLogin(e) {
+    e.preventDefault();
+    const pw = document.getElementById('loginPw').value;
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginError');
+    btn.textContent = '로그인 중...'; btn.disabled = true;
+    err.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadApplications();
+      } else {
+        err.textContent = data.error || '로그인 실패';
+        err.style.display = 'block';
+      }
+    } catch {
+      err.textContent = '서버 연결 실패';
+      err.style.display = 'block';
+    }
+    btn.textContent = '로그인'; btn.disabled = false;
+  }
+
+  // Logout
+  function handleLogout() {
+    document.cookie = 'tab_admin_token=; Path=/; Max-Age=0';
+    document.cookie = 'tab_admin_expiry=; Path=/; Max-Age=0';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginPw').value = '';
+  }
+
+  // Load applications
+  async function loadApplications() {
+    const filter = document.getElementById('statusFilter').value;
+    try {
+      const res = await fetch(`/api/admin/applications?status=${filter}`, { credentials: 'same-origin' });
+      if (res.status === 401) { handleLogout(); return; }
+      const { data } = await res.json();
+      allData = data || [];
+      renderTable(allData);
+      updateStats(allData);
+    } catch {
+      document.getElementById('appTableBody').innerHTML =
+        '<tr><td colspan="7" class="px-5 py-12 text-center font-body text-sm" style="color:#EF4444;">데이터를 불러올 수 없습니다.</td></tr>';
+    }
+  }
+
+  function updateStats(data) {
+    // When filtered, show all counts from full dataset (re-fetch all for stats)
+    document.getElementById('statTotal').textContent = data.length;
+    document.getElementById('statPending').textContent = data.filter(d => d.status === 'pending').length;
+    document.getElementById('statContacted').textContent = data.filter(d => d.status === 'contacted').length;
+    document.getElementById('statEnrolled').textContent = data.filter(d => d.status === 'enrolled').length;
+  }
+
+  function renderTable(items) {
+    const tbody = document.getElementById('appTableBody');
+    if (items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-12 text-center font-body text-sm" style="color:#94a3b8;">신청 내역이 없습니다.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(item => `
+      <tr style="border-top:1px solid #f1f5f9;">
+        <td class="px-5 py-4 font-body text-sm" style="font-weight:600;">${esc(item.name)}</td>
+        <td class="px-5 py-4 font-body text-xs" style="color:#64748b;">${esc(item.email)}</td>
+        <td class="px-5 py-4 font-body text-xs hidden md:table-cell" style="color:#64748b;">${esc(item.phone)}</td>
+        <td class="px-5 py-4 font-body text-xs hidden md:table-cell">${STAGE_MAP[item.stage] || item.stage}</td>
+        <td class="px-5 py-4"><span class="status-badge status-${item.status}">${STATUS_MAP[item.status]}</span></td>
+        <td class="px-5 py-4 font-body text-xs hidden lg:table-cell" style="color:#94a3b8;">${new Date(item.created_at).toLocaleDateString('ko-KR')}</td>
+        <td class="px-5 py-4">
+          <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px;" onclick='showDetail(${JSON.stringify(item).replace(/'/g,"&#39;")})'>상세</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Detail modal
+  function showDetail(item) {
+    document.getElementById('detailModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('detailContent').innerHTML = `
+      <div style="display:grid;gap:12px;">
+        <div><label class="font-body text-xs" style="color:#94a3b8;">이름</label><p class="font-body text-sm" style="font-weight:600;">${esc(item.name)}</p></div>
+        <div><label class="font-body text-xs" style="color:#94a3b8;">이메일</label><p class="font-body text-sm">${esc(item.email)}</p></div>
+        <div><label class="font-body text-xs" style="color:#94a3b8;">전화번호</label><p class="font-body text-sm">${esc(item.phone)}</p></div>
+        <div><label class="font-body text-xs" style="color:#94a3b8;">사업 단계</label><p class="font-body text-sm">${STAGE_MAP[item.stage] || item.stage}</p></div>
+        <div><label class="font-body text-xs" style="color:#94a3b8;">관심 분야</label><p class="font-body text-sm">${item.interest || '-'}</p></div>
+        <div><label class="font-body text-xs" style="color:#94a3b8;">유입 경로</label><p class="font-body text-sm">${item.referral || '-'}</p></div>
+        <div><label class="font-body text-xs" style="color:#94a3b8;">신청일</label><p class="font-body text-sm">${new Date(item.created_at).toLocaleString('ko-KR')}</p></div>
+        <hr style="border:none;border-top:1px solid #f1f5f9;"/>
+        <div>
+          <label class="font-body text-xs" style="color:#94a3b8;">상태 변경</label>
+          <select id="detailStatus" class="w-full mt-1">
+            ${['pending','contacted','enrolled','rejected'].map(s => `<option value="${s}" ${item.status===s?'selected':''}>${STATUS_MAP[s]}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="font-body text-xs" style="color:#94a3b8;">메모</label>
+          <textarea id="detailNotes" class="w-full mt-1" rows="3" placeholder="내부 메모...">${esc(item.notes || '')}</textarea>
+        </div>
+        <button class="btn btn-primary w-full" onclick="updateApp('${item.id}')">저장</button>
+      </div>
+    `;
+  }
+
+  function closeDetail() {
+    document.getElementById('detailModal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  async function updateApp(id) {
+    const status = document.getElementById('detailStatus').value;
+    const notes = document.getElementById('detailNotes').value;
+    try {
+      const res = await fetch('/api/admin/update-status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status, notes }),
+        credentials: 'same-origin',
+      });
+      if (res.ok) {
+        closeDetail();
+        loadApplications();
+      }
+    } catch {
+      alert('업데이트 실패');
+    }
+  }
+
+  // XSS 방지
+  function esc(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+</script>
+
+</body>
+</html>
